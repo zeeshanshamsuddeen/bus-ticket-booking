@@ -1,7 +1,7 @@
 const express = require('express');
 
 const {
-  getTicket, bookTicket, updateTicket, deleteTicket,
+  getTicket, getTicketPassenger, bookTicket, updateTicket, deleteTicket,
 } = require('../core/tickets');
 
 const router = express.Router();
@@ -9,11 +9,21 @@ const router = express.Router();
 // Get ticket info using Ticket ID
 router.get('/:id', async (req, res) => {
   const { id: ticketId } = req.params;
-  const ticketBookingResult = await getTicket(ticketId);
-  if (!ticketBookingResult.success) {
-    return res.status(ticketBookingResult.code).send();
+  const ticketResult = await getTicket(ticketId);
+  if (!ticketResult.success) {
+    return res.status(ticketResult.code).send();
   }
-  return res.json({ success: true, ticket: ticketBookingResult.ticket });
+  return res.json({ success: true, ticket: ticketResult.ticket });
+});
+
+// Get Passenger info using Ticket ID
+router.get('/:id/passenger', async (req, res) => {
+  const { id: ticketId } = req.params;
+  const passengerResult = await getTicketPassenger(ticketId);
+  if (!passengerResult.success) {
+    return res.status(passengerResult.code).send();
+  }
+  return res.json({ success: true, passenger: passengerResult.passenger });
 });
 
 // Book a ticket with passenger info

@@ -11,6 +11,19 @@ const getTicket = async (ticketId) => {
   return { success: true, ticket: ticketDoc };
 };
 
+// Get Passenger info using Ticket ID
+const getTicketPassenger = async (ticketId) => {
+  const ticketDoc = await db.tickets.findOneWithLean({ ticketId });
+  if (!ticketDoc) {
+    return { success: false, code: httpStatus.notfound };
+  }
+  const passengerDoc = await db.passengers.findOneWithLean({ passengerId: ticketDoc.passengerId });
+  if (!passengerDoc) {
+    return { success: false, code: httpStatus.notfound };
+  }
+  return { success: true, passenger: passengerDoc };
+};
+
 const validationMapper = {
   name: (data) => data,
   sex: (data) => data === keywords.MALE || data === keywords.FEMALE,
@@ -109,6 +122,7 @@ const deleteTicket = async (ticketId) => {
 
 module.exports = {
   getTicket,
+  getTicketPassenger,
   bookTicket,
   updateTicket,
   deleteTicket,

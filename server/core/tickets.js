@@ -98,7 +98,7 @@ const bookTicket = async (passengerInfo) => {
   if (!validationResult) {
     return { success: false, code: httpStatus.badRequest };
   }
-  // busId can be queried here for searching open seat in a bus
+  // Bus ID can be queried here for searching open seat in a bus
   const openSeatForBus = await db.seats.findOneWithLean({ status: [keywords.OPEN] });
   if (!openSeatForBus) {
     return { success: false, code: httpStatus.conflict };

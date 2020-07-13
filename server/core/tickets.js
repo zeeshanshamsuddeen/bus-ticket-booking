@@ -10,10 +10,11 @@ const validationMapper = {
   phone: (data) => utils.validation.validatePhoneNumber(data),
 };
 const requiredFields = ['name', 'sex', 'age', 'email', 'phone'];
-const validInputData = (passengerInfo) => requiredFields.every((field) => validationMapper[field](passengerInfo[field]));
+const validInputData = (passengerInfo, fields = requiredFields) => fields.every((field) => validationMapper[field] ? validationMapper[field](passengerInfo[field]) : true);
 
 const passengerFields = ['name', 'sex', 'age', 'email', 'phone'];
-const createPassenger = (passengerInfo, passengerId) => {
+
+const createPassenger = (passengerId, passengerInfo) => {
   const updateObject = passengerFields.reduce((acc, field) => {
     acc[field] = passengerInfo[field];
     return acc;
@@ -23,7 +24,18 @@ const createPassenger = (passengerInfo, passengerId) => {
   return updateObject.passengerId;
 };
 
-const createTicket = (openSeatForBus, passengerId, ticketId) => {
+const updatePassenger = async (passengerId, passengerInfo) => {
+  const updateObject = passengerFields.reduce((acc, field) => {
+    if (passengerInfo[field]) {
+      acc[field] = passengerInfo[field];
+    }
+    return acc;
+  }, {});
+  await db.passengers.findOneAndUpdate({ passengerId }, updateObject);
+  return updateObject.passengerId;
+};
+
+const createTicket = (passengerId, ticketId, openSeatForBus) => {
   const initObject = {
     ticketId,
     busId: '123XYZ', // Can be taken from Input
@@ -39,6 +51,7 @@ const bookSeat = (openSeatForBus) => {
   db.seats.findOneAndUpdate({ seatId: openSeatForBus.seatId }, { status: keywords.BOOKED });
 };
 
+// Book a ticket with passenger info
 const bookTicket = async (passengerInfo) => {
   const validationResult = validInputData(passengerInfo);
   if (!validationResult) {
@@ -52,11 +65,27 @@ const bookTicket = async (passengerInfo) => {
   const passengerId = utils.common.getUUID();
   const ticketId = utils.common.getUUID();
   bookSeat(openSeatForBus);
-  createPassenger(passengerInfo, passengerId);
-  createTicket(openSeatForBus, passengerId, ticketId);
+  createPassenger(passengerId, passengerInfo);
+  createTicket(passengerId, ticketId, openSeatForBus);
   return { success: true, ticketId };
+};
+
+// Update a ticket using Ticket ID
+const updateTicket = async (ticketId, passengerInfo) => {
+  const fields = Object.keys(passengerInfo);
+  const validationResult = validInputData(passengerInfo, fields);
+  if (!validationResult) {
+    return { success: false, code: httpStatus.badRequest };
+  }
+  const ticketDoc = await db.tickets.findOneWithLean({ ticketId, status: keywords.BOOKED });
+  if (!ticketDoc) {
+    return { success: false, code: httpStatus.notfound };
+  }
+  updatePassenger(ticketDoc.passengerId, passengerInfo);
+  return { success: true };
 };
 
 module.exports = {
   bookTicket,
+  updateTicket,
 };

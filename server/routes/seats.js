@@ -4,6 +4,7 @@ const { getSeats } = require('../core/seats');
 
 const router = express.Router();
 
+// Get Seats List using status
 router.get('/', async (req, res) => {
   const seatsResult = await getSeats(req.query);
   if (!seatsResult.success) {

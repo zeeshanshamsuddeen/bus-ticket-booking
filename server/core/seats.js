@@ -9,6 +9,7 @@ const validStatus = {
 // more validation can be added here for query params
 const validateParams = ({ status }) => validStatus[status];
 
+// Get Seats List using status
 const getSeats = async (params) => {
   const validationResult = validateParams(params);
   if (!validationResult) {

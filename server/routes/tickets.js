@@ -1,10 +1,20 @@
 const express = require('express');
 
 const {
-  getTicket, getTicketPassenger, bookTicket, updateTicket, deleteTicket,
+  getTickets, getTicket, getTicketPassenger,
+  bookTicket, updateTicket, deleteTicket,
 } = require('../core/tickets');
 
 const router = express.Router();
+
+// Get Tickets List using status
+router.get('/', async (req, res) => {
+  const ticketsResult = await getTickets(req.query);
+  if (!ticketsResult.success) {
+    return res.status(ticketsResult.code).send();
+  }
+  return res.json({ success: true, tickets: ticketsResult.tickets });
+});
 
 // Get ticket info using Ticket ID
 router.get('/:id', async (req, res) => {

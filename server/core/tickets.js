@@ -2,6 +2,25 @@ const { httpStatus, keywords } = require('../constants');
 const utils = require('../shared/utils');
 const db = require('../dbHandlers/dbModule');
 
+const validStatus = {
+  [keywords.BOOKED]: true,
+  [keywords.CANCELLED]: true,
+};
+
+// more validation can be added here for query params
+const validateParams = ({ status }) => validStatus[status];
+
+// Get Tickets List using status
+const getTickets = async (params) => {
+  const validationResult = validateParams(params);
+  if (!validationResult) {
+    return { success: false, code: httpStatus.badRequest };
+  }
+  const { status } = params;
+  const ticketDocs = await db.tickets.findWithLean({ status });
+  return { success: true, tickets: ticketDocs };
+};
+
 // Get ticket info using Ticket ID
 const getTicket = async (ticketId) => {
   const ticketDoc = await db.tickets.findOneWithLean({ ticketId });
@@ -121,6 +140,7 @@ const deleteTicket = async (ticketId) => {
 };
 
 module.exports = {
+  getTickets,
   getTicket,
   getTicketPassenger,
   bookTicket,

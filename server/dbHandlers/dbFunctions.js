@@ -22,9 +22,11 @@ const findWithSkipLimitLean = (Model, queryObject, skipNumber, limitNumber) => M
 
 const findWithLean = (Model, queryObject) => Model.find(queryObject).lean(true);
 
-const count = (Model, queryObject) => Model.count(queryObject);
+const findWithProjectLean = (Model, queryObject, projectQuery) => Model.find(queryObject, projectQuery).lean(true);
 
 const findAndUpdate = (Model, queryObject, updateObject) => Model.updateMany(queryObject, updateObject);
+
+const count = (Model, queryObject) => Model.count(queryObject);
 
 const remove = (Model, queryObject) => Model.deleteMany(queryObject);
 
@@ -38,8 +40,9 @@ module.exports = {
   findOneWithLean,
   find,
   findWithSkipLimitLean,
-  count,
+  findWithProjectLean,
   findWithLean,
+  count,
   remove,
   findAndUpdate,
   aggregate,

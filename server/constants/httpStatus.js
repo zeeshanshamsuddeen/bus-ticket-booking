@@ -5,7 +5,7 @@ const status = {
   unauthorized: 401,
   conflict: 409,
   created: 201,
-  bad: 400,
+  badRequest: 400,
   noContent: 204,
 };
 

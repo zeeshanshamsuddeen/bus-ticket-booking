@@ -1,0 +1,4 @@
+PORT=8000
+DATABASE_URL=localhost
+DATABASE_NAME=assignment
+NODE_ENV=development

@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const routes = require('./routes');
+const middlewares = require('./middlewares');
 const { httpStatus } = require('./constants');
 
 const app = express();
@@ -20,7 +21,8 @@ app.use('/api/v1/tickets', routes.tickets);
 // Admin Validation can be added using middlewares
 app.use('/api/v1/admin', routes.admin);
 
-// generate UUID here and log the error along with it.
-app.use((error, req, res, next) => res.status(httpStatus.error).send({ message: 'Internal Server Error' }));
+app.use('*', (req, res) => res.status(httpStatus.badRequest).send());
+
+app.use(middlewares.errorHandler);
 
 module.exports = app;

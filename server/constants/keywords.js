@@ -3,6 +3,8 @@ const keywords = {
   USER: 'USER',
   OPEN: 'OPEN',
   CLOSE: 'CLOSE',
+  BOOKED: 'BOOKED',
+  CANCELLED: 'CANCELLED',
   MALE: 'MALE',
   FEMALE: 'FEMALE',
 };

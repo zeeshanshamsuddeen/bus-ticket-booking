@@ -15,10 +15,7 @@ const getSeats = async (params) => {
     return { success: false, code: httpStatus.badRequest };
   }
   const { status } = params;
-  const projectQuery = {
-    _id: 0, busId: 1, status: 1, seatId: 1, seatDisplayId: 1,
-  };
-  const seatsFromDb = await db.seats.findWithProjectLean({ status }, projectQuery);
+  const seatsFromDb = await db.seats.findWithLean({ status });
   return { success: true, seats: seatsFromDb };
 };
 

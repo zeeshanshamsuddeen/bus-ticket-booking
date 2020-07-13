@@ -2,6 +2,15 @@ const { httpStatus, keywords } = require('../constants');
 const utils = require('../shared/utils');
 const db = require('../dbHandlers/dbModule');
 
+// Get ticket info using Ticket ID
+const getTicket = async (ticketId) => {
+  const ticketDoc = await db.tickets.findOneWithLean({ ticketId });
+  if (!ticketDoc) {
+    return { success: false, code: httpStatus.notfound };
+  }
+  return { success: true, ticket: ticketDoc };
+};
+
 const validationMapper = {
   name: (data) => data,
   sex: (data) => data === keywords.MALE || data === keywords.FEMALE,
@@ -99,6 +108,7 @@ const deleteTicket = async (ticketId) => {
 };
 
 module.exports = {
+  getTicket,
   bookTicket,
   updateTicket,
   deleteTicket,

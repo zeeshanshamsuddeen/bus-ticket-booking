@@ -18,6 +18,8 @@ const findOne = (Model, queryObject) => Model.findOne(queryObject);
 
 const findOneWithLean = (Model, queryObject) => Model.findOne(queryObject).lean(true);
 
+const findOneWithProjectLean = (Model, queryObject, projectQuery) => Model.findOne(queryObject, projectQuery).lean(true);
+
 const find = (Model, queryObject) => Model.find(queryObject);
 
 const findWithSkipLimitLean = (Model, queryObject, skipNumber, limitNumber) => Model.find(queryObject).sort({ name: 1 }).skip(skipNumber).limit(limitNumber).lean(true);
@@ -48,6 +50,7 @@ module.exports = {
   add,
   findOne,
   findOneWithLean,
+  findOneWithProjectLean,
   find,
   findWithSkipLimitLean,
   findWithProjectLean,

@@ -24,14 +24,14 @@ const createPassenger = (passengerId, passengerInfo) => {
   return updateObject.passengerId;
 };
 
-const updatePassenger = async (passengerId, passengerInfo) => {
+const updatePassenger = (passengerId, passengerInfo) => {
   const updateObject = passengerFields.reduce((acc, field) => {
     if (passengerInfo[field]) {
       acc[field] = passengerInfo[field];
     }
     return acc;
   }, {});
-  await db.passengers.findOneAndUpdate({ passengerId }, updateObject);
+  db.passengers.findOneAndUpdate({ passengerId }, updateObject);
   return updateObject.passengerId;
 };
 
@@ -85,7 +85,21 @@ const updateTicket = async (ticketId, passengerInfo) => {
   return { success: true };
 };
 
+// Cancel a ticket using Ticket ID
+const deleteTicket = async (ticketId) => {
+  const ticketDoc = await db.tickets.findOneWithLean({ ticketId, status: keywords.BOOKED });
+  if (!ticketDoc) {
+    return { success: false, code: httpStatus.notfound };
+  }
+  db.tickets.findOneAndUpdate({ ticketId }, { status: keywords.CANCELLED });
+  db.seats.findOneAndUpdate({ seatId: ticketDoc.seatId }, { status: keywords.OPEN });
+  db.passengers.removeOne({ passengerId: ticketDoc.passengerId });
+  // for history, passenger info can also be maintained if needed.
+  return { success: true };
+};
+
 module.exports = {
   bookTicket,
   updateTicket,
+  deleteTicket,
 };

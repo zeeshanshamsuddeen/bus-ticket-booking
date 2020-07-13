@@ -16,6 +16,7 @@ const requiredDbFunctions = [
   'findWithProjectLean',
   'count',
   'remove',
+  'removeOne',
   'findAndUpdate',
   'aggregate',
 ];

@@ -13,6 +13,7 @@ app.use(cors());
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
+// User Validation can be added using middlewares
 app.use('/api/v1/seats', routes.seats);
 app.use('/api/v1/tickets', routes.tickets);
 

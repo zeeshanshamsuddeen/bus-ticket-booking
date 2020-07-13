@@ -1,4 +1,6 @@
-const findOneAndUpdate = (Model, queryObject, updateObject) => Model.findOneAndUpdate(queryObject, updateObject);
+const findOneAndUpdate = async (Model, queryObject, updateObject) => {
+  await Model.findOneAndUpdate(queryObject, updateObject);
+};
 
 const addOne = (Model, initObj) => {
   const createObject = new Model(initObj);
@@ -24,11 +26,19 @@ const findWithLean = (Model, queryObject) => Model.find(queryObject).lean(true);
 
 const findWithProjectLean = (Model, queryObject, projectQuery) => Model.find(queryObject, projectQuery).lean(true);
 
-const findAndUpdate = (Model, queryObject, updateObject) => Model.updateMany(queryObject, updateObject);
+const findAndUpdate = async (Model, queryObject, updateObject) => {
+  await Model.updateMany(queryObject, updateObject);
+};
 
 const count = (Model, queryObject) => Model.count(queryObject);
 
-const remove = (Model, queryObject) => Model.deleteMany(queryObject);
+const remove = async (Model, queryObject) => {
+  await Model.deleteMany(queryObject);
+};
+
+const removeOne = async (Model, queryObject) => {
+  await Model.deleteOne(queryObject);
+};
 
 const aggregate = (Model, queryObject) => Model.aggregate(queryObject);
 
@@ -44,6 +54,7 @@ module.exports = {
   findWithLean,
   count,
   remove,
+  removeOne,
   findAndUpdate,
   aggregate,
 };

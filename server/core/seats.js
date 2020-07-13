@@ -6,6 +6,7 @@ const validStatus = {
   [keywords.BOOKED]: true,
 };
 
+// more validation can be added here for query params
 const validateParams = ({ status }) => validStatus[status];
 
 const getSeats = async (params) => {

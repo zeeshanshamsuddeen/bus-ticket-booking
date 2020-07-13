@@ -14,6 +14,7 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 app.use('/api/v1/seats', routes.seats);
+app.use('/api/v1/tickets', routes.tickets);
 
 // generate UUID here and log the error along with it.
 app.use((error, req, res, next) => res.status(httpStatus.error).send({ message: 'Internal Server Error' }));

@@ -5,9 +5,7 @@ const { getSeats } = require('../core/seats');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  const { status } = req.query;
-  const params = { status };
-  const seatsResult = await getSeats(params);
+  const seatsResult = await getSeats(req.query);
   if (!seatsResult.success) {
     return res.status(seatsResult.code).send();
   }

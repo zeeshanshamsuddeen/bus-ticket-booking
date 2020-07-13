@@ -9,9 +9,12 @@ const checkPassword = (password, passwordDigest) => bcrypt.compareSync(password,
 
 const checkObjectHasKey = (object, key) => object.hasOwnProperty(key);
 
+const isNumber = (value) => !isNaN(Number(value));
+
 module.exports = {
   getUUID,
   hashPassword,
   checkPassword,
   checkObjectHasKey,
+  isNumber,
 };

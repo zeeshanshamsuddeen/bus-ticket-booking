@@ -14,12 +14,10 @@ app.use(cors());
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-// User Validation can be added using middlewares
-app.use('/api/v1/seats', routes.seats);
-app.use('/api/v1/tickets', routes.tickets);
+app.use('/api/v1/seats', middlewares.authenticateUser, routes.seats);
+app.use('/api/v1/tickets', middlewares.authenticateUser, routes.tickets);
 
-// Admin Validation can be added using middlewares
-app.use('/api/v1/admin', routes.admin);
+app.use('/api/v1/admin', middlewares.authenticateAdmin, routes.admin);
 
 app.use('*', (req, res) => res.status(httpStatus.badRequest).send());
 

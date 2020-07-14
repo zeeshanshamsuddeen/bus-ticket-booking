@@ -87,6 +87,30 @@ const bookValidTicket = (done) => {
     });
 };
 
+const adminReset = (done) => {
+  chai.request(server)
+    .post('/api/v1/admin/seats/reset')
+    .send()
+    .end((err, res) => {
+      if (err) {
+        console.log('err: ', err);
+        return;
+      }
+      res.should.have.status(200);
+      res.body.should.be.a('object');
+      res.body.should.have.property('success');
+      res.body.success.should.be.eql(true);
+      done();
+    });
+};
+
+describe('Admin Reset', () => {
+  // Test the /POST route
+  describe('/POST admin reset', () => {
+    it('it should Reset all seats', (done) => adminReset(done));
+  });
+});
+
 describe('Seats', () => {
   // Test the /GET route
   describe('/GET seats', () => {

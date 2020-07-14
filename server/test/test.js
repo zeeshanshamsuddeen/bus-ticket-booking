@@ -8,6 +8,8 @@ const server = require('../index');
 chai.use(chaiHttp);
 chai.should();
 
+let ticketId;
+
 const getSeats = (done, status, seats) => {
   chai.request(server)
     .get(`/api/v1/seats?status=${status}`)
@@ -40,7 +42,7 @@ const getTickets = (done, status, tickets) => {
 
 const bookInvalidTicket = (done) => {
   const passengerInfo = {
-    name: 'Zeeshan',
+    name: 'abc',
     sex: 'MALE',
     age: '24',
     phone: '9876543210',
@@ -63,10 +65,10 @@ const bookInvalidTicket = (done) => {
 
 const bookValidTicket = (done) => {
   const passengerInfo = {
-    name: 'Zeeshan',
+    name: 'abc',
     sex: 'MALE',
     age: '24',
-    email: 'zeeshan@abc.com',
+    email: 'abc@abc.com',
     phone: '9876543210',
   };
   chai.request(server)
@@ -83,6 +85,43 @@ const bookValidTicket = (done) => {
       res.body.success.should.be.eql(true);
       res.body.should.have.property('ticketId');
       res.body.ticketId.should.be.a('string');
+      ticketId = res.body.ticketId;
+      done();
+    });
+};
+
+const updateTicket = (done, updateObject) => {
+  chai.request(server)
+    .put(`/api/v1/tickets/${ticketId}`)
+    .send(updateObject)
+    .end((err, res) => {
+      if (err) {
+        console.log('err: ', err);
+        return;
+      }
+      res.should.have.status(200);
+      res.body.should.be.a('object');
+      res.body.should.have.property('success');
+      res.body.success.should.be.eql(true);
+      done();
+    });
+};
+
+const checkUpdatedPassenger = (done, updateObject) => {
+  chai.request(server)
+    .get(`/api/v1/tickets/${ticketId}/passenger`)
+    .end((err, res) => {
+      if (err) {
+        console.log('err: ', err);
+        return;
+      }
+      res.should.have.status(200);
+      res.body.should.be.a('object');
+      res.body.should.have.property('success');
+      res.body.success.should.be.eql(true);
+      res.body.should.have.property('passenger');
+      res.body.passenger.should.be.a('object');
+      res.body.passenger.name.should.be.eql(updateObject.name);
       done();
     });
 };
@@ -133,4 +172,12 @@ describe('Tickets', () => {
     it('it should GET 39 OPEN seats', (done) => getSeats(done, 'OPEN', 39));
     it('it should GET 1 BOOKED seats', (done) => getSeats(done, 'BOOKED', 1));
   });
+
+  // Test the /PUT route
+  describe('/PUT tickets', async () => {
+    const updateObject = { name: 'abc def' };
+    it('it should Update the Ticket', (done) => updateTicket(done, updateObject));
+    it('check update was successful', (done) => checkUpdatedPassenger(done, updateObject));
+  });
+  
 });

@@ -3,6 +3,7 @@ require('../dbHandlers/dbConnector');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 
+const { keywords } = require('../constants');
 const server = require('../index');
 
 chai.use(chaiHttp);
@@ -143,6 +144,54 @@ const adminReset = (done) => {
     });
 };
 
+const deleteTicket = (done) => {
+  chai.request(server)
+    .delete(`/api/v1/tickets/${ticketId}`)
+    .end((err, res) => {
+      if (err) {
+        console.log('err: ', err);
+        return;
+      }
+      res.should.have.status(200);
+      res.body.should.be.a('object');
+      res.body.should.have.property('success');
+      res.body.success.should.be.eql(true);
+      done();
+    });
+};
+
+const checkDeletedPassenger = (done) => {
+  chai.request(server)
+    .get(`/api/v1/tickets/${ticketId}/passenger`)
+    .end((err, res) => {
+      if (err) {
+        console.log('err: ', err);
+        return;
+      }
+      res.should.have.status(404);
+      done();
+    });
+};
+
+const checkTicketStatus = (done, status) => {
+  chai.request(server)
+    .get(`/api/v1/tickets/${ticketId}`)
+    .end((err, res) => {
+      if (err) {
+        console.log('err: ', err);
+        return;
+      }
+      res.should.have.status(200);
+      res.body.should.be.a('object');
+      res.body.should.have.property('success');
+      res.body.success.should.be.eql(true);
+      res.body.should.have.property('ticket');
+      res.body.ticket.should.be.a('object');
+      res.body.ticket.status.should.be.eql(status);
+      done();
+    });
+};
+
 describe('Admin Reset', () => {
   // Test the /POST route
   describe('/POST admin reset', () => {
@@ -151,33 +200,47 @@ describe('Admin Reset', () => {
 });
 
 describe('Seats', () => {
-  // Test the /GET route
+  // Test the GET route for seats
   describe('/GET seats', () => {
-    it('it should GET all OPEN seats', (done) => getSeats(done, 'OPEN', 40));
-    it('it should GET all BOOKED seats', (done) => getSeats(done, 'BOOKED', 0));
+    it('it should GET all OPEN seats', (done) => getSeats(done, keywords.OPEN, 40));
+    it('it should GET all BOOKED seats', (done) => getSeats(done, keywords.BOOKED, 0));
+    // more tests for Invalid params
   });
 });
 
 describe('Tickets', () => {
-  // Test the /GET route
-  describe('/GET tickets', () => {
-    it('it should GET 40 BOOKED tickets', (done) => getTickets(done, 'BOOKED', 0));
-    it('it should GET 0 CANCELLED tickets', (done) => getTickets(done, 'CANCELLED', 0));
+  // Test the GET route for tickets
+  describe('GET tickets', () => {
+    it('it should GET 40 BOOKED tickets', (done) => getTickets(done, keywords.BOOKED, 0));
+    it('it should GET 0 CANCELLED tickets', (done) => getTickets(done, keywords.CANCELLED, 0));
+    // more tests for Invalid params
   });
 
-  // Test the /POST route
-  describe('/POST tickets', async () => {
+  // Test the POST route for tickets
+  describe('Book Ticket', async () => {
     it('it should not Book Ticket with Invalid data', (done) => bookInvalidTicket(done));
     it('it should Book Ticket with Valid data', (done) => bookValidTicket(done));
-    it('it should GET 39 OPEN seats', (done) => getSeats(done, 'OPEN', 39));
-    it('it should GET 1 BOOKED seats', (done) => getSeats(done, 'BOOKED', 1));
+    it('it should GET 39 OPEN seats', (done) => getSeats(done, keywords.OPEN, 39));
+    it('it should GET 1 BOOKED seats', (done) => getSeats(done, keywords.BOOKED, 1));
   });
 
-  // Test the /PUT route
-  describe('/PUT tickets', async () => {
+  // Test the PUT route for tickets and GET route for passenger
+  describe('Update ticket', async () => {
     const updateObject = { name: 'abc def' };
     it('it should Update the Ticket', (done) => updateTicket(done, updateObject));
-    it('check update was successful', (done) => checkUpdatedPassenger(done, updateObject));
+    it('confirm update was successful', (done) => checkUpdatedPassenger(done, updateObject));
+    // more tests for Invalid Update objects, Invalid Ticket ID
   });
-  
+
+  // Test the DELETE route for tickets
+  describe('Delete ticket', async () => {
+    it('it should Delete the Ticket', (done) => deleteTicket(done));
+    it('confirm Ticket Status is changed', (done) => checkTicketStatus(done, keywords.CANCELLED));
+    it('confirm Passengers are deleted', (done) => checkDeletedPassenger(done));
+    it('it should GET 0 BOOKED tickets', (done) => getTickets(done, keywords.BOOKED, 0));
+    it('it should GET 1 CANCELLED tickets', (done) => getTickets(done, keywords.CANCELLED, 1));
+    it('it should GET 40 OPEN seats', (done) => getSeats(done, keywords.OPEN, 40));
+    it('it should GET 0 BOOKED seats', (done) => getSeats(done, keywords.BOOKED, 0));
+    // more tests for Invalid Ticket ID
+  });
 });

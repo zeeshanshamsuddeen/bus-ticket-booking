@@ -54,7 +54,7 @@ router.post('/', async (req, res, next) => {
     // busId and seatId can be passed as query params to book a specific seat.
     const ticketBookingResult = await bookTicket(req.body);
     if (!ticketBookingResult.success) {
-      return res.status(ticketBookingResult.code).send();
+      return res.status(ticketBookingResult.code).send({ success: false });
     }
     return res.json({ success: true, ticketId: ticketBookingResult.ticketId });
   } catch (error) {

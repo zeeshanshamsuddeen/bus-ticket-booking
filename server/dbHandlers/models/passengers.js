@@ -6,6 +6,7 @@ const { Schema } = mongoose;
 
 const initSchema = new Schema({
   passengerId: { type: String, required: true },
+  ticketId: { type: String, required: true },
   name: { type: String, required: true },
   sex: { type: String, enum: [keywords.MALE, keywords.FEMALE] },
   age: { type: Number, required: true },

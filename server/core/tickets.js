@@ -55,11 +55,12 @@ const validInputData = (passengerInfo, fields = requiredFields) => fields.every(
 
 const passengerFields = ['name', 'sex', 'age', 'email', 'phone'];
 
-const createPassenger = (passengerId, passengerInfo) => {
+const createPassenger = (ticketId, passengerId, passengerInfo) => {
   const updateObject = passengerFields.reduce((acc, field) => {
     acc[field] = passengerInfo[field];
     return acc;
   }, {});
+  updateObject.ticketId = ticketId;
   updateObject.passengerId = passengerId;
   db.passengers.addOne(updateObject);
   return updateObject.passengerId;
@@ -88,8 +89,9 @@ const createTicket = (passengerId, ticketId, openSeatForBus) => {
   db.tickets.addOne(initObject);
 };
 
-const bookSeat = (openSeatForBus) => {
-  db.seats.findOneAndUpdate({ seatId: openSeatForBus.seatId }, { status: keywords.BOOKED });
+const bookSeat = async (ticketId, openSeatForBus) => {
+  // since we are updating the document using status OPEN, parallel bookings are handled
+  await db.seats.findOneAndUpdate({ seatId: openSeatForBus.seatId, status: keywords.OPEN }, { status: keywords.BOOKED, ticketId });
 };
 
 // Book a ticket with passenger info
@@ -105,8 +107,14 @@ const bookTicket = async (passengerInfo) => {
   }
   const passengerId = utils.common.getUUID();
   const ticketId = utils.common.getUUID();
-  bookSeat(openSeatForBus);
-  createPassenger(passengerId, passengerInfo);
+  await bookSeat(ticketId, openSeatForBus);
+  // Make sure that the seat was booked using ticketId. If so, continue booking process
+  const seatForTicket = await db.seats.findOneWithLean({ ticketId });
+  if (!seatForTicket) {
+    return { success: false, code: httpStatus.conflict };
+    // Can be improved: Try to book the next available ticket
+  }
+  createPassenger(ticketId, passengerId, passengerInfo);
   createTicket(passengerId, ticketId, openSeatForBus);
   return { success: true, ticketId };
 };
@@ -122,6 +130,7 @@ const updateTicket = async (ticketId, passengerInfo) => {
   if (!ticketDoc) {
     return { success: false, code: httpStatus.notfound };
   }
+  // Only passenger information update as of now
   updatePassenger(ticketDoc.passengerId, passengerInfo);
   return { success: true };
 };
@@ -133,7 +142,7 @@ const deleteTicket = async (ticketId) => {
     return { success: false, code: httpStatus.notfound };
   }
   db.tickets.findOneAndUpdate({ ticketId }, { status: keywords.CANCELLED });
-  db.seats.findOneAndUpdate({ seatId: ticketDoc.seatId }, { status: keywords.OPEN });
+  db.seats.findOneAndUpdate({ seatId: ticketDoc.seatId }, { status: keywords.OPEN, ticketId: '' });
   db.passengers.removeOne({ passengerId: ticketDoc.passengerId });
   // for history, passenger info can also be maintained if needed.
   return { success: true };

@@ -28,20 +28,19 @@ Tickets can be BOOKED or CANCELLED. Updates to canceled tickets are not allowed.
 
 - `GET: /api/v1/seats?status=OPEN/BOOKED`
 
- Get the list of seats on the bus based on status.
+  Get the list of seats on the bus based on status.
 
 - `GET: /api/v1/tickets?status=BOOKED/CANCELLED`
 
- Get the list of tickets on the bus based on status.
-
+  Get the list of tickets on the bus based on status.
 
 - `GET: /api/v1/tickets/<Ticket ID>`
 
- Get ticket information using Ticket ID.
+  Get ticket information using Ticket ID.
 
 - `GET: /api/v1/tickets/<Ticket ID>/passenger`
 
- Get the Passenger information using a Ticket ID.
+  Get the Passenger information using a Ticket ID.
 
 - `POST: /api/v1/tickets`
 `payload:
@@ -53,7 +52,7 @@ Tickets can be BOOKED or CANCELLED. Updates to canceled tickets are not allowed.
   "phone":"9876543210"
 }`
 
- Book a ticket. When a ticket is booked, a ticket document and a passenger document is created and the seat status is changed to BOOKED.
+  Book a ticket. When a ticket is booked, a ticket document and a passenger document is created and the seat status is changed to BOOKED.
 
 - `PUT: /api/v1/tickets/<Ticket ID>`
 `payload:
@@ -61,15 +60,15 @@ Tickets can be BOOKED or CANCELLED. Updates to canceled tickets are not allowed.
   "name":"David John"
 }`
 
- Update a ticket using a Ticket ID. Currently, only the passenger information update is allowed. Updates to Cancelled tickets are not allowed.
+  Update a ticket using a Ticket ID. Currently, only the passenger information update is allowed. Updates to Cancelled tickets are not allowed.
 
 - `DELETE: /api/v1/tickets/<Ticket ID>`
 
- Delete/cancel a ticket using a Ticket ID. The ticket information is retained, and the passenger information is removed currently.
+  Delete/cancel a ticket using a Ticket ID. The ticket information is retained, and the passenger information is removed currently.
 
 - `POST: /admin/tickets/reset`
 
- Admin route: All seats are Opened. Tickets and passenger information is cleared.
+  Admin route: All seats are Opened. Tickets and passenger information is cleared.
 
 
 Note: All routes can be extended for bus specific operations.

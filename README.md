@@ -1,7 +1,7 @@
 # Bus Ticket Booking Server
 A simple bus booking server using NodeJS and ExpressJS.
 
-## Table of Contents (Optional)
+## Table of Contents
 
 - [Introduction](#introduction)
 - [APIs](#apis)

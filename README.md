@@ -76,7 +76,7 @@ Note: All routes can be extended for bus specific operations.
 
 A successful response will be
 
-200: `{ status: true, data: {} }` or `{ status: true, data: [] }`
+200: `{ success: true, data: {} }` or `{ success: true, data: [] }`
 
 
 

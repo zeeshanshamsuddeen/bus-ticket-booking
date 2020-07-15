@@ -95,4 +95,3 @@ A successful response will be
 - Shorted IDs can be used instead of UUID.
 -  HTTP codes should lie in the express layer. The core layer should use some other statuses and they should be mapped in the express layer.
 - Test Cases are week. Test functions can be moved out of the main test file.
-- Https needs to be enabled in the server block.

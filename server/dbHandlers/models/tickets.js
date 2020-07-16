@@ -11,6 +11,8 @@ const initSchema = new Schema({
   passengerId: { type: String, required: true },
   status: { type: String, required: true, enum: [keywords.BOOKED, keywords.CANCELLED] },
   dateOfTravel: { type: Date, required: true },
+  source: { type: String, required: true }, // Objects can also be used
+  destination: { type: String, required: true },
 }, { timestamps: true });
 
 module.exports = mongoose.model('tickets', initSchema);

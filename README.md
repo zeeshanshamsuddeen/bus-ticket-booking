@@ -1,7 +1,7 @@
 # Bus Ticket Booking Server
 A simple bus booking server using NodeJS and ExpressJS.
 
-## Table of Contents (Optional)
+## Table of Contents
 
 - [Introduction](#introduction)
 - [APIs](#apis)
@@ -66,7 +66,7 @@ Tickets can be BOOKED or CANCELLED. Updates to canceled tickets are not allowed.
 
   Delete/cancel a ticket using a Ticket ID. The ticket information is retained, and the passenger information is removed currently.
 
-- `POST: /admin/tickets/reset`
+- `POST: /api/v1/admin/tickets/reset`
 
   Admin route: All seats are Opened. Tickets and passenger information is cleared.
 

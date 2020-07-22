@@ -1,5 +1,6 @@
 const findOneAndUpdate = async (Model, queryObject, updateObject) => {
-  await Model.findOneAndUpdate(queryObject, updateObject);
+  const updatedDoc = await Model.findOneAndUpdate(queryObject, updateObject, { new: true });
+  return updatedDoc;
 };
 
 const addOne = (Model, initObj) => {
@@ -22,7 +23,8 @@ const findOneWithProjectLean = (Model, queryObject, projectQuery) => Model.findO
 
 const find = (Model, queryObject) => Model.find(queryObject);
 
-const findWithSkipLimitLean = (Model, queryObject, skipNumber, limitNumber) => Model.find(queryObject).sort({ name: 1 }).skip(skipNumber).limit(limitNumber).lean(true);
+const findWithSkipLimitLean = (Model, queryObject, skipNumber, limitNumber) => Model.find(queryObject).sort({ name: 1 }).skip(skipNumber).limit(limitNumber)
+  .lean(true);
 
 const findWithLean = (Model, queryObject) => Model.find(queryObject).lean(true);
 

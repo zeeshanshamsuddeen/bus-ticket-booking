@@ -6,7 +6,6 @@ const authenticateUser = async (req, res, next) => {
     // validate User ID and attach User ID in request
     next();
   } catch (error) {
-    console.log('error: ', error);
     res.status(httpStatus.unauthorized).send();
   }
 };

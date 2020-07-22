@@ -8,7 +8,7 @@ const { keywords } = require('../constants');
 (() => {
   try {
     // buses should be created first and accordingly seats should be created.
-    const maxSeatsForBus = 40;
+    const maxSeatsForBus = 1;
     const seatObject = { busId: utils.common.getUUID(), status: keywords.OPEN };
     for (let i = 0; i < maxSeatsForBus; i += 1) {
       seatObject.seatId = utils.common.getUUID();
@@ -16,7 +16,5 @@ const { keywords } = require('../constants');
       db.seats.addOne(seatObject);
     }
   } catch (error) {
-    console.log('error: ', error);
   }
-  console.log('DONE');
 })();

@@ -5,7 +5,6 @@ const authenticateAdmin = async (req, res, next) => {
     // validate token in header
     next();
   } catch (error) {
-    console.log('error: ', error);
     res.status(httpStatus.unauthorized).send();
   }
 };

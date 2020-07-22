@@ -51,7 +51,7 @@ const validationMapper = {
   phone: (data) => utils.validation.validatePhoneNumber(data),
 };
 const requiredFields = ['name', 'sex', 'age', 'email', 'phone'];
-const validInputData = (passengerInfo, fields = requiredFields) => fields.every((field) => validationMapper[field] ? validationMapper[field](passengerInfo[field]) : true);
+const validInputData = (passengerInfo, fields = requiredFields) => fields.every((field) => (validationMapper[field] ? validationMapper[field](passengerInfo[field]) : true));
 
 const passengerFields = ['name', 'sex', 'age', 'email', 'phone'];
 
@@ -77,11 +77,11 @@ const updatePassenger = (passengerId, passengerInfo) => {
   return updateObject.passengerId;
 };
 
-const createTicket = (passengerId, ticketId, openSeatForBus) => {
+const createTicket = (passengerId, ticketId, seatId) => {
   const initObject = {
     ticketId,
     busId: '123XYZ', // Can be taken from Input
-    seatId: openSeatForBus.seatId,
+    seatId,
     passengerId,
     status: keywords.BOOKED,
     dateOfTravel: new Date(),
@@ -89,9 +89,14 @@ const createTicket = (passengerId, ticketId, openSeatForBus) => {
   db.tickets.addOne(initObject);
 };
 
-const bookSeat = async (ticketId, openSeatForBus) => {
+const bookSeat = async (ticketId) => {
+  // Bus ID can be queried here for searching open seat in a bus
   // since we are updating the document using status OPEN, parallel bookings are handled
-  await db.seats.findOneAndUpdate({ seatId: openSeatForBus.seatId, status: keywords.OPEN }, { status: keywords.BOOKED, ticketId });
+  const updatedDoc = await db.seats.findOneAndUpdate({ status: keywords.OPEN }, { status: keywords.BOOKED, ticketId });
+  if (updatedDoc && updatedDoc.ticketId === ticketId) {
+    return { success: true, seatId: updatedDoc.seatId };
+  }
+  return { success: false };
 };
 
 // Book a ticket with passenger info
@@ -100,22 +105,14 @@ const bookTicket = async (passengerInfo) => {
   if (!validationResult) {
     return { success: false, code: httpStatus.badRequest };
   }
-  // Bus ID can be queried here for searching open seat in a bus
-  const openSeatForBus = await db.seats.findOneWithLean({ status: [keywords.OPEN] });
-  if (!openSeatForBus) {
-    return { success: false, code: httpStatus.conflict };
-  }
   const passengerId = utils.common.getUUID();
   const ticketId = utils.common.getUUID();
-  await bookSeat(ticketId, openSeatForBus);
-  // Make sure that the seat was booked using ticketId. If so, continue booking process
-  const seatForTicket = await db.seats.findOneWithLean({ ticketId });
-  if (!seatForTicket) {
+  const bookedSeatResponse = await bookSeat(ticketId);
+  if (!bookedSeatResponse.success) {
     return { success: false, code: httpStatus.conflict };
-    // Can be improved: Try to book the next available ticket
   }
   createPassenger(ticketId, passengerId, passengerInfo);
-  createTicket(passengerId, ticketId, openSeatForBus);
+  createTicket(passengerId, ticketId, bookedSeatResponse.seatId);
   return { success: true, ticketId };
 };
 

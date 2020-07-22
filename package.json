@@ -6,7 +6,9 @@
   "scripts": {
     "start": "nodemon server/bin/www.js",
     "test": "mocha server/test/*.js --exit",
-    "initialize-data": "node server/supportScripts/addInitialSeats.js"
+    "initialize-data": "node server/supportScripts/addInitialSeats.js",
+    "lint": "eslint --ignore-path .gitignore .",
+    "lint:fix": "eslint --fix ."
   },
   "author": "Zeeshan Shamsuddeen",
   "license": "ISC",

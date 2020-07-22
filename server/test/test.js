@@ -16,7 +16,6 @@ const getSeats = (done, status, seats) => {
     .get(`/api/v1/seats?status=${status}`)
     .end((err, res) => {
       if (err) {
-        console.log('err: ', err);
         return;
       }
       res.should.have.status(200);
@@ -31,7 +30,6 @@ const getTickets = (done, status, tickets) => {
     .get(`/api/v1/tickets?status=${status}`)
     .end((err, res) => {
       if (err) {
-        console.log('err: ', err);
         return;
       }
       res.should.have.status(200);
@@ -53,7 +51,6 @@ const bookInvalidTicket = (done) => {
     .send(passengerInfo)
     .end((err, res) => {
       if (err) {
-        console.log('err: ', err);
         return;
       }
       res.should.have.status(400);
@@ -77,7 +74,6 @@ const bookValidTicket = (done) => {
     .send(passengerInfo)
     .end((err, res) => {
       if (err) {
-        console.log('err: ', err);
         return;
       }
       res.should.have.status(200);
@@ -97,7 +93,6 @@ const updateTicket = (done, updateObject) => {
     .send(updateObject)
     .end((err, res) => {
       if (err) {
-        console.log('err: ', err);
         return;
       }
       res.should.have.status(200);
@@ -113,7 +108,6 @@ const checkUpdatedPassenger = (done, updateObject) => {
     .get(`/api/v1/tickets/${ticketId}/passenger`)
     .end((err, res) => {
       if (err) {
-        console.log('err: ', err);
         return;
       }
       res.should.have.status(200);
@@ -133,7 +127,6 @@ const adminReset = (done) => {
     .send()
     .end((err, res) => {
       if (err) {
-        console.log('err: ', err);
         return;
       }
       res.should.have.status(200);
@@ -149,7 +142,6 @@ const deleteTicket = (done) => {
     .delete(`/api/v1/tickets/${ticketId}`)
     .end((err, res) => {
       if (err) {
-        console.log('err: ', err);
         return;
       }
       res.should.have.status(200);
@@ -165,7 +157,6 @@ const checkDeletedPassenger = (done) => {
     .get(`/api/v1/tickets/${ticketId}/passenger`)
     .end((err, res) => {
       if (err) {
-        console.log('err: ', err);
         return;
       }
       res.should.have.status(404);
@@ -178,7 +169,6 @@ const checkTicketStatus = (done, status) => {
     .get(`/api/v1/tickets/${ticketId}`)
     .end((err, res) => {
       if (err) {
-        console.log('err: ', err);
         return;
       }
       res.should.have.status(200);
